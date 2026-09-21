@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF9DF" id="themeColor">
+<meta name="robots" content="noindex">
+<meta name="description" content="Una sorpresa para ti">
+<title>Una primavera más</title>
+<meta property="og:title" content="Una primavera más">
+<meta property="og:description" content="Una sorpresa para ti">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_LA">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --cream:#FFF9DF;
+  --pastel:#FFF2B0;
+  --pastel-2:#FFF8D3;
+  --gold:#E3A812;
+  --petal:#FFCE33;
+  --petal-lt:#FFE27A;
+  --center:#C27A14;
+  --cocoa:#5A4216;
+  --ok:#6FA83B;
+  --err:#D2764F;
+  --body:Calibri, Carlito, "Segoe UI", Roboto, Arial, sans-serif;
+  --script:"Dancing Script", "Segoe Script", "Brush Script MT", cursive;
+}
+
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{
+  margin:0;height:100%;overflow:hidden;
+  background:var(--cream);color:var(--cocoa);
+  font-family:var(--body);
+  -webkit-tap-highlight-color:transparent;
+}
+button,input{font:inherit;color:inherit}
+
+/* ───────────── Capas ───────────── */
+#start{position:fixed;inset:0;z-index:1;
+  background:linear-gradient(175deg,#FFF9DF 0%,#FFF6CC 55%,#FFF2B0 100%);}
+#paper{position:fixed;inset:0;z-index:2;visibility:hidden;
+  background:linear-gradient(180deg,var(--pastel) 0%,var(--pastel-2) 100%);}
+#flowers{position:fixed;inset:0;width:100%;height:100%;z-index:3;pointer-events:none;display:block}
+#letter{position:fixed;inset:0;z-index:4;visibility:hidden;
+  overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  touch-action:manipulation;}
+
+/* ───────────── Pantalla 1 ───────────── */
+.corners{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.cf{position:absolute;height:auto;aspect-ratio:1;transform:rotate(var(--r,0deg));
+  animation:sway 7s ease-in-out infinite alternate;animation-delay:var(--dl,0s)}
+.sp{position:absolute;width:14px;height:14px;fill:var(--petal);opacity:.8;
+  animation:twinkle 3.4s ease-in-out infinite;animation-delay:var(--dl,0s)}
+@keyframes sway{from{transform:rotate(calc(var(--r,0deg) - 7deg))}to{transform:rotate(calc(var(--r,0deg) + 7deg))}}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:.95;transform:scale(1.1)}}
+
+.start-scroll{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;
+  display:flex;flex-direction:column;align-items:center;
+  padding:max(20px,env(safe-area-inset-top)) 24px max(20px,env(safe-area-inset-bottom))}
+.stage{margin:auto 0;width:100%;max-width:480px;text-align:center;
+  display:flex;flex-direction:column;align-items:center}
+
+.butterfly{width:88px;height:auto;margin-bottom:6px;overflow:visible;
+  filter:drop-shadow(0 4px 6px rgba(194,122,20,.25));animation:float 5s ease-in-out infinite}
+.flap{transform-origin:50px 50px;animation:flap 1.25s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+@keyframes flap{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.55)}}
+
+.question{font-family:var(--script);font-weight:700;color:var(--cocoa);
+  font-size:clamp(2rem,4.4vw + 1rem,3rem);line-height:1.18;margin:8px 0 26px;text-wrap:balance}
+
+.field{position:relative;width:min(100%,340px)}
+.field input{
+  width:100%;height:60px;padding:0 44px;
+  text-align:center;font-size:1.65rem;letter-spacing:.06em;font-variant-numeric:tabular-nums;
+  color:var(--cocoa);background:#FFFDF6;
+  border:2.5px solid var(--gold);border-radius:18px;outline:none;
+  box-shadow:0 4px 14px rgba(227,168,18,.18);
+  transition:border-color .25s,box-shadow .25s,background .25s;
+  -webkit-appearance:none;appearance:none}
+.field input::placeholder{color:rgba(90,66,22,.38);letter-spacing:.02em;font-size:1.2rem}
+.field input:focus{box-shadow:0 0 0 5px rgba(227,168,18,.22),0 4px 14px rgba(227,168,18,.18)}
+.field.bad input{border-color:var(--err);box-shadow:0 0 0 4px rgba(210,118,79,.16)}
+.field.ok input{border-color:var(--ok);box-shadow:0 0 0 4px rgba(111,168,59,.16);background:#FCFFF3}
+.field.shake{animation:shake .5s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{
+  10%,90%{transform:translateX(-2px)} 20%,80%{transform:translateX(4px)}
+  30%,50%,70%{transform:translateX(-7px)} 40%,60%{transform:translateX(7px)}}
+
+.tick{position:absolute;right:13px;top:50%;width:32px;height:32px;margin-top:-16px;display:none}
+.field.ok .tick{display:block;animation:tickPop .5s cubic-bezier(.34,1.56,.64,1) backwards}
+.tick path{stroke-dasharray:24;animation:draw .45s .2s ease-out backwards}
+@keyframes tickPop{from{transform:scale(0)}}
+@keyframes draw{from{stroke-dashoffset:24}}
+
+.feedback{width:100%;min-height:176px;margin-top:16px;display:flex;flex-direction:column;align-items:center}
+.msg-bad{animation:rise .35s ease-out backwards}
+.msg-bad .oops{margin:0;font-size:1.15rem;font-weight:700;color:#B0552F;line-height:1.35;text-wrap:balance}
+.msg-bad .hint{margin:6px 0 0;font-size:.95rem;color:rgba(90,66,22,.72)}
+.yes{font-family:var(--script);font-weight:700;font-size:clamp(1.7rem,2.4vw + 1rem,2.1rem);
+  line-height:1.2;color:var(--cocoa);margin:2px 0 20px;text-wrap:balance;animation:rise .7s ease-out backwards}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+
+.open-btn{position:relative;border:0;cursor:pointer;
+  min-width:236px;padding:17px 38px;border-radius:999px;
+  font-size:1.45rem;font-weight:700;letter-spacing:.01em;color:#4A3510;
+  background:linear-gradient(180deg,#F2BC2C 0%,var(--gold) 100%);
+  box-shadow:0 10px 22px rgba(227,168,18,.5),inset 0 -3px 0 rgba(150,95,10,.28),inset 0 2px 0 rgba(255,255,255,.35);
+  animation:pop .85s .15s cubic-bezier(.34,1.4,.64,1) backwards;
+  transition:transform .15s}
+.open-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  animation:halo 2.1s 1.4s ease-out infinite}
+.open-btn:active{transform:scale(.96)}
+.open-btn:focus-visible{outline:3px solid var(--cocoa);outline-offset:4px}
+@keyframes pop{
+  0%{opacity:0;transform:translateY(26px) scale(.55)}
+  55%{opacity:1;transform:translateY(-7px) scale(1.09)}
+  78%{transform:translateY(2px) scale(.97)}
+  100%{opacity:1;transform:none}}
+@keyframes halo{
+  0%{box-shadow:0 0 0 0 rgba(227,168,18,.55)}
+  100%{box-shadow:0 0 0 22px rgba(227,168,18,0)}}
+
+/* ───────────── Pantalla 2: la carta ───────────── */
+.letter-inner{width:100%;max-width:680px;margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 36px) 30px calc(env(safe-area-inset-bottom) + 120px)}
+.letter-inner p{margin:0 0 1.15em;font-size:19px;line-height:1.55;color:var(--cocoa);
+  hyphens:auto;-webkit-hyphens:auto;text-wrap:pretty}
+.letter-inner .hand{font-family:var(--script);font-weight:700;font-size:2.15rem;line-height:1.2;margin-bottom:.7em}
+.letter-inner .orn{text-align:center;color:var(--gold);font-size:1.45rem;letter-spacing:.3em;
+  margin:.5em 0 1.3em;font-family:"Segoe UI Symbol","Apple Symbols","Noto Sans Symbols 2",var(--body)}
+.letter-inner .closing{font-family:var(--script);font-weight:700;font-size:2.35rem;line-height:1.2;
+  text-align:center;margin:1.1em 0 0;text-wrap:balance}
+
+/* ───────────── Botón de música ───────────── */
+.music{position:fixed;z-index:20;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));
+  width:54px;height:54px;padding:0;border-radius:50%;cursor:pointer;
+  display:grid;place-items:center;
+  background:rgba(255,249,223,.82);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  border:2.5px solid var(--gold);box-shadow:0 6px 16px rgba(120,80,10,.22);
+  opacity:0;pointer-events:none;transition:opacity .6s,background .25s,border-color .25s,box-shadow .25s}
+.music.show{opacity:1;pointer-events:auto}
+.music svg{width:26px;height:26px;overflow:visible}
+.music .note{fill:var(--center);transition:opacity .25s}
+.music .slash{stroke:#B0552F;stroke-width:3;stroke-linecap:round;opacity:0;transition:opacity .25s}
+.music.playing{animation:ring 2.4s ease-out infinite}
+.music.playing .note{animation:bob 1.2s ease-in-out infinite;transform-origin:50% 60%}
+.music.paused{background:rgba(238,232,208,.78);border:2.5px dashed #B7A570;box-shadow:0 3px 8px rgba(120,80,10,.12)}
+.music.paused .note{opacity:.4;fill:#8A7440}
+.music.paused .slash{opacity:1}
+.music:focus-visible{outline:3px solid var(--cocoa);outline-offset:3px}
+@keyframes ring{0%{box-shadow:0 6px 16px rgba(120,80,10,.22),0 0 0 0 rgba(227,168,18,.5)}
+  100%{box-shadow:0 6px 16px rgba(120,80,10,.22),0 0 0 14px rgba(227,168,18,0)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-2px) rotate(4deg)}}
+
+/* ───────────── Movimiento reducido ───────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition-duration:.01ms !important}
+  .music{transition:none}
+}
+</style>
+</head>
+<body>
+
+<noscript><p style="padding:2rem;text-align:center">Esta sorpresa necesita JavaScript activado 💛</p></noscript>
+
+<audio id="song" preload="auto" loop></audio>
+
+<!-- Pantalla 1: inicio -->
+<main id="start">
+  <div class="corners" aria-hidden="true">
+    <svg class="cf" style="top:-14px;left:-16px;width:74px;--r:18deg;--dl:-1s"><use href="#flower"/></svg>
+    <svg class="cf" style="top:54px;left:40px;width:30px;--r:-25deg;--dl:-3s"><use href="#flower"/></svg>
+    <svg class="cf" style="top:26px;right:-10px;width:56px;--r:-14deg;--dl:-2s"><use href="#flower"/></svg>
+    <svg class="cf" style="top:104px;right:34px;width:26px;--r:30deg;--dl:-4s"><use href="#flower"/></svg>
+    <svg class="cf" style="bottom:22px;left:-12px;width:64px;--r:-20deg;--dl:-2.5s"><use href="#flower"/></svg>
+    <svg class="cf" style="bottom:92px;left:34px;width:28px;--r:22deg;--dl:-5s"><use href="#flower"/></svg>
+    <svg class="cf" style="bottom:-10px;right:-8px;width:70px;--r:12deg;--dl:-1.5s"><use href="#flower"/></svg>
+    <svg class="cf" style="bottom:78px;right:30px;width:30px;--r:-32deg;--dl:-3.5s"><use href="#flower"/></svg>
+    <svg class="sp" style="top:12%;left:24%;--dl:-.5s"><use href="#spark"/></svg>
+    <svg class="sp" style="top:20%;right:20%;width:10px;height:10px;--dl:-1.6s"><use href="#spark"/></svg>
+    <svg class="sp" style="top:46%;left:6%;width:11px;height:11px;--dl:-2.2s"><use href="#spark"/></svg>
+    <svg class="sp" style="bottom:24%;right:8%;--dl:-.9s"><use href="#spark"/></svg>
+    <svg class="sp" style="bottom:12%;left:30%;width:10px;height:10px;--dl:-2.8s"><use href="#spark"/></svg>
+  </div>
+
+  <div class="start-scroll">
+    <div class="stage">
+      <svg class="butterfly" viewBox="0 0 100 84" aria-hidden="true">
+        <defs>
+          <g id="wingL">
+            <path d="M49 42C44 20 22 2 8 10C-2 16 4 36 20 44C30 48 40 47 49 44Z" fill="#E3A812" stroke="#C27A14" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M49 46C38 46 24 52 20 62C16 72 28 80 36 72C44 66 48 56 49 50Z" fill="#FFCE33" stroke="#C27A14" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="20" cy="24" r="5.2" fill="#FFE27A"/>
+            <circle cx="32" cy="34" r="2.6" fill="#FFF2B0"/>
+            <circle cx="30" cy="64" r="3.2" fill="#FFF2B0"/>
+          </g>
+        </defs>
+        <g class="flap"><use href="#wingL"/></g>
+        <g transform="translate(100 0) scale(-1 1)"><g class="flap"><use href="#wingL"/></g></g>
+        <ellipse cx="50" cy="47" rx="2.8" ry="16" fill="#8A5A12"/>
+        <circle cx="50" cy="29" r="3.4" fill="#8A5A12"/>
+        <path d="M49 27C46 18 41 14 37 13M51 27C54 18 59 14 63 13" stroke="#8A5A12" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <circle cx="37" cy="13" r="1.6" fill="#8A5A12"/><circle cx="63" cy="13" r="1.6" fill="#8A5A12"/>
+      </svg>
+
+      <h1 class="question">¿Cuál fue la fecha del primer mensaje que me escribiste?</h1>
+
+      <div class="field" id="field">
+        <input id="date" type="text" inputmode="numeric" maxlength="40"
+               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done"
+               placeholder="día / mes / año" aria-label="Fecha del primer mensaje: día, mes y año" autofocus>
+        <svg class="tick" viewBox="0 0 32 32" aria-hidden="true">
+          <circle cx="16" cy="16" r="16" fill="#6FA83B"/>
+          <path d="M9 16.5l4.8 4.8L23 11.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+
+      <div class="feedback" role="status" aria-live="polite">
+        <div class="msg-bad" id="msgBad" hidden>
+          <p class="oops" id="oops">Mmm, esa no es... ¡inténtalo otra vez, mi amor!</p>
+          <p class="hint" id="hint">Pista: fue en septiembre.</p>
+        </div>
+        <div class="msg-ok" id="msgOk" hidden>
+          <p class="yes">¡Sí, ese día! ¡Lo recordaste, mi amor!</p>
+          <button type="button" class="open-btn" id="openBtn" hidden>Abrir mi carta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Pantalla 2: la carta -->
+<div id="paper" aria-hidden="true"></div>
+<canvas id="flowers" aria-hidden="true"></canvas>
+
+<div id="letter" tabindex="-1">
+  <article class="letter-inner" id="letterInner"></article>
+</div>
+
+<button type="button" class="music paused" id="music" aria-label="Reanudar música" aria-pressed="false" title="Música">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path class="note" d="M9 3v11.3A3.9 3.9 0 1 0 11 17.5V7.6l8-1.8v6.5a3.9 3.9 0 1 0 2 3.2V3z"/>
+    <line class="slash" x1="3.5" y1="3.5" x2="21" y2="21"/>
+  </svg>
+</button>
+
+<script>
+(() => {
+'use strict';
+
+/* ═════════════ Utilidades ═════════════ */
+const $ = s => document.querySelector(s);
+const rand = (a, b) => a + Math.random() * (b - a);
+const TAU = Math.PI * 2;
+const rm = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+/* ═════════════ La flor (un solo dibujo para todo) ═════════════ */
+const PETAL = 'M0-7C10-14 11-38 0-47C-11-38-10-14 0-7Z';
+let petals = '';
+for (let i = 0; i < 8; i += 2)         // pétalos claros, debajo
+  petals += `<path d="${PETAL}" transform="rotate(${i * 45 + 45}) scale(.94)" fill="#FFE27A" stroke="#E3A812" stroke-opacity=".5" stroke-width="1.2"/>`;
+for (let i = 0; i < 8; i += 2)         // pétalos dorados, encima
+  petals += `<path d="${PETAL}" transform="rotate(${i * 45})" fill="#FFCE33" stroke="#E3A812" stroke-opacity=".6" stroke-width="1.2"/>`;
+let dots = '';
+for (let i = 0; i < 6; i++) dots += `<circle cx="${(Math.cos(i * TAU / 6) * 5.2).toFixed(2)}" cy="${(Math.sin(i * TAU / 6) * 5.2).toFixed(2)}" r="1.5" fill="#FFE27A" opacity=".85"/>`;
+const FLOWER = `${petals}<circle r="10.5" fill="#C27A14" stroke="#A4630C" stroke-width="1"/>${dots}`;
+
+// símbolos SVG para las florcitas de las esquinas
+document.body.insertAdjacentHTML('afterbegin',
+  `<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+     <symbol id="flower" viewBox="-50 -50 100 100">${FLOWER}</symbol>
+     <symbol id="spark" viewBox="-10 -10 20 20"><path d="M0-10C1 -4 4 -1 10 0C4 1 1 4 0 10C-1 4 -4 1 -10 0C-4 -1 -1 -4 0-10Z"/></symbol>
+   </defs></svg>`);
+
+const flowerSVG = px => `<svg xmlns="http://www.w3.org/2000/svg" width="${px}" height="${px}" viewBox="-50 -50 100 100">${FLOWER}</svg>`;
+const svgURI = svg => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+
+// ícono de la pestaña
+const fav = document.createElement('link');
+fav.rel = 'icon'; fav.href = svgURI(flowerSVG(64));
+document.head.appendChild(fav);
+
+// sprite para el canvas
+const sprite = new Image();
+let spriteReady = false;
+sprite.onload = () => { spriteReady = true; draw(); };
+sprite.src = svgURI(flowerSVG(160));
+
+/* ═════════════ Canvas de flores ═════════════ */
+const cv = $('#flowers');
+const cx = cv.getContext('2d');
+const MAX = 150;
+let W = 0, H = 0, dpr = 1;
+const flowers = [];
+let ambientOn = false, nextSpawn = 0, raf = 0, last = 0;
+
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 3);
+  W = cv.clientWidth; H = cv.clientHeight;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  if (rm.matches && ambientOn) seedStill();
+  draw();
+}
+window.addEventListener('resize', resize);
+
+// Más visibles por los lados, más suaves donde está el texto
+function edgeAlpha(x) {
+  const colHalf = Math.min(W / 2, 340);
+  const a = colHalf * 0.5, b = Math.min(W / 2, colHalf + 30);
+  const t = Math.min(1, Math.max(0, (Math.abs(x - W / 2) - a) / (b - a)));
+  const s = t * t * (3 - 2 * t);
+  return 0.28 + 0.67 * s;
+}
+
+function mk(o) {
+  return Object.assign({ x: 0, x0: 0, y: 0, vx: 0, vy: 0, size: 20, rot: rand(0, TAU), spin: 0,
+    amp: 0, freq: 1, ph: 0, age: 0, fall: 40, burst: false, still: false, ambient: false }, o);
+}
+function add(f) { flowers.push(f); while (flowers.length > MAX) flowers.shift(); }
+
+function spawnAmbient(anywhere) {
+  const s = Math.min(1.3, Math.max(0.85, W / 420));
+  const band = Math.max(W * 0.16, (W - 660) / 2);
+  const x = Math.random() < 0.78
+    ? (Math.random() < 0.5 ? rand(-8, band) : rand(W - band, W + 8))
+    : rand(0, W);
+  add(mk({ ambient: true, x, x0: x, y: anywhere ? rand(0, H) : -30, size: rand(17, 30) * s,
+    fall: rand(30, 46), spin: rand(0.35, 1.0) * (Math.random() < 0.5 ? -1 : 1),
+    amp: rand(10, 26), freq: rand(0.6, 1.2), ph: rand(0, TAU) }));
+}
+
+// Con movimiento reducido: flores quietas repartidas por los lados
+function seedStill() {
+  for (let i = flowers.length - 1; i >= 0; i--) if (flowers[i].ambient) flowers.splice(i, 1);
+  for (let i = 0; i < 16; i++) { spawnAmbient(true); flowers[flowers.length - 1].still = true; }
+}
+
+function burst(x, y, opt = {}) {
+  const n = opt.count || 6 + Math.floor(Math.random() * 5);          // 6 a 10
+  for (let i = 0; i < n; i++) {
+    if (rm.matches) {                                                // quietas
+      const ang = rand(0, TAU), d = rand(8, 56);
+      add(mk({ burst: true, still: true, x: x + Math.cos(ang) * d, y: y + Math.sin(ang) * d, size: rand(16, 28) }));
+      continue;
+    }
+    const ang = opt.radial ? (i / n) * TAU + rand(-0.25, 0.25) : rand(0, TAU);
+    const sp = rand(80, 210) * (opt.spread || 1);
+    add(mk({ burst: true, x, x0: x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp - 50,
+      size: rand(16, 32), fall: rand(70, 115), spin: rand(1.2, 3) * (Math.random() < 0.5 ? -1 : 1),
+      amp: rand(8, 22), freq: rand(1.5, 3), ph: rand(0, TAU) }));
+  }
+  ensureLoop();
+}
+
+function step(dt) {
+  for (let i = flowers.length - 1; i >= 0; i--) {
+    const f = flowers[i];
+    if (f.still) continue;
+    f.age += dt;
+    f.rot += f.spin * dt;
+    if (f.burst) {
+      const k1 = Math.exp(-2.4 * dt), k2 = Math.exp(-1.3 * dt);
+      f.vx *= k1;
+      f.vy = f.vy * k2 + f.fall * (1 - k2);
+      const ramp = 1 - Math.exp(-f.age * 1.2);
+      f.x += (f.vx + Math.cos(f.age * f.freq + f.ph) * f.amp * f.freq * ramp) * dt;
+      f.y += f.vy * dt;
+    } else {
+      f.y += f.fall * dt;
+      f.x = f.x0 + Math.sin(f.age * f.freq + f.ph) * f.amp;
+    }
+    if (f.y - f.size > H || f.x < -120 || f.x > W + 120) flowers.splice(i, 1);
+  }
+  if (ambientOn) {
+    nextSpawn -= dt;
+    if (nextSpawn <= 0) { spawnAmbient(false); nextSpawn = rand(1.1, 2.0); }
+  }
+}
+
+function draw() {
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cx.clearRect(0, 0, W, H);
+  if (!spriteReady) return;
+  for (const f of flowers) {
+    const a = f.burst ? 0.96 : edgeAlpha(f.x) * Math.min(1, f.age * 0.7 + (f.still ? 1 : 0.1));
+    if (a <= 0.01) continue;
+    const c = Math.cos(f.rot) * dpr, s = Math.sin(f.rot) * dpr;
+    cx.setTransform(c, s, -s, c, f.x * dpr, f.y * dpr);
+    cx.globalAlpha = a;
+    cx.drawImage(sprite, -f.size / 2, -f.size / 2, f.size, f.size);
+  }
+  cx.globalAlpha = 1;
+}
+
+function loop(t) {
+  raf = requestAnimationFrame(loop);
+  const dt = Math.min(0.05, (t - last) / 1000 || 0);
+  last = t;
+  step(dt);
+  draw();
+  if (!ambientOn && !flowers.length) { cancelAnimationFrame(raf); raf = 0; }
+}
+function ensureLoop() {
+  if (rm.matches) { draw(); return; }
+  if (!raf) { last = performance.now(); raf = requestAnimationFrame(loop); }
+}
+rm.addEventListener && rm.addEventListener('change', () => {
+  if (rm.matches) { cancelAnimationFrame(raf); raf = 0; for (const f of flowers) f.still = true; draw(); }
+  else if (ambientOn) { for (const f of flowers) f.still = false; ensureLoop(); }
+});
+resize();
+
+/* ═════════════ Carta y canción cifradas ═════════════
+   La carta y la canción viajan cifradas (AES-256-GCM). La llave sale de la fecha correcta;
+   con otra fecha no se pueden leer. Ni la fecha ni el texto aparecen en este archivo. */
+const KDF = {"s":"JB7ZCAOupMFyFaWycDq3QQ==","n":600000};
+const LETTER = {"i":"toIuCMiOor+4lCYM","c":"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"};
+const pad2 = n => String(n).padStart(2, '0');
+const smallB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const bigB64 = async s => new Uint8Array(await (await fetch('data:application/octet-stream;base64,' + s)).arrayBuffer());
+
+let cryptoKey = null;
+async function unlock(p) {
+  try {
+    const raw = new TextEncoder().encode(pad2(p.d) + '/' + pad2(p.m) + '/' + p.y);
+    const base = await crypto.subtle.importKey('raw', raw, 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: smallB64(KDF.s), iterations: KDF.n, hash: 'SHA-256' },
+      base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: smallB64(LETTER.i) }, key, smallB64(LETTER.c));
+    $('#letterInner').innerHTML = new TextDecoder().decode(plain);
+    cryptoKey = key;
+    return true;
+  } catch (e) { return false; }      // fecha incorrecta → la verificación del cifrado falla
+}
+
+// La canción (cancion.enc.js) se descarga en segundo plano desde que abre la página
+const songFile = new Promise(res => {
+  const sc = document.createElement('script');
+  sc.src = 'cancion.enc.js';
+  sc.onload = () => res(window.__SONG || null);
+  sc.onerror = () => res(null);
+  document.head.appendChild(sc);
+});
+async function prepareSong() {
+  try {
+    const enc = await songFile;
+    if (!enc || !cryptoKey) throw 0;
+    const mp3 = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: smallB64(enc.i) }, cryptoKey, await bigB64(enc.c));
+    song.src = URL.createObjectURL(new Blob([mp3], { type: 'audio/mpeg' }));
+    song.load();
+  } catch (e) { musicBtn.hidden = true; }   // sin canción, la carta se abre igual
+}
+
+/* ═════════════ Pregunta y validación ═════════════ */
+const input = $('#date'), field = $('#field');
+const msgBad = $('#msgBad'), msgOk = $('#msgOk'), openBtn = $('#openBtn');
+let state = 'ask';   // ask → solved → letter
+
+const MONTHS = { enero:1, febrero:2, marzo:3, abril:4, mayo:5, junio:6, julio:7, agosto:8,
+  septiembre:9, setiembre:9, sept:9, sep:9, octubre:10, noviembre:11, diciembre:12 };
+
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
+
+// Devuelve { d, m, y } cuando la fecha está completa, o null si todavía no
+function parseDate(raw) {
+  const s = norm(raw);
+  let mt;
+  if ((mt = s.match(/^(\d{1,2})[\/\-. ]+(\d{1,2})[\/\-. ]+(\d{4})$/))) return { d: +mt[1], m: +mt[2], y: +mt[3] };
+  if ((mt = s.match(/^(\d{1,2}) de ([a-z]+)(?: (?:de|del))? (\d{4})$/))) return { d: +mt[1], m: MONTHS[mt[2]] || 0, y: +mt[3] };
+  return null;
+}
+
+// 07052001 → 07/05/2001 (las diagonales se ponen solas)
+function fmt(digits, eager) {
+  const d = digits.slice(0, 8);
+  let out = d.slice(0, 2);
+  if (d.length > 2 || (eager && d.length === 2)) out += '/' + d.slice(2, 4);
+  if (d.length > 4 || (eager && d.length === 4)) out += '/' + d.slice(4, 8);
+  return out;
+}
+
+function clearError() {
+  field.classList.remove('bad');
+  msgBad.hidden = true;
+}
+
+function wrong() {
+  field.classList.add('bad');
+  msgBad.hidden = false;
+  msgBad.style.animation = 'none'; void msgBad.offsetWidth; msgBad.style.animation = '';
+  field.classList.remove('shake'); void field.offsetWidth; field.classList.add('shake');
+}
+field.addEventListener('animationend', e => { if (e.animationName === 'shake') field.classList.remove('shake'); });
+
+function revealButton() {
+  openBtn.hidden = false;
+  const wait = rm.matches ? 0 : 800;
+  setTimeout(() => {
+    const r = openBtn.getBoundingClientRect();
+    const cxp = r.left + r.width / 2, cyp = r.top + r.height / 2;
+    if (rm.matches) {                                        // anillo quieto alrededor del botón
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * TAU;
+        add(mk({ burst: true, still: true, size: rand(14, 22),
+          x: cxp + Math.cos(a) * (r.width / 2 + 26), y: cyp + Math.sin(a) * (r.height / 2 + 26) }));
+      }
+      draw();
+    } else burst(cxp, cyp, { count: 12, radial: true, spread: 0.95 });
+  }, wait);
+  setTimeout(() => openBtn.focus({ preventScroll: true }), 600);
+}
+
+function correct() {
+  state = 'solved';
+  input.readOnly = true;
+  input.blur();
+  clearError();
+  field.classList.add('ok');
+  msgOk.hidden = false;
+  // El botón aparece cuando la canción ya está lista (así suena en el mismo toque)
+  const timeout = new Promise(res => setTimeout(res, 6000));
+  Promise.race([prepareSong(), timeout]).then(revealButton, revealButton);
+}
+
+let busy = false;
+async function check(force) {
+  if (state !== 'ask' || busy) return;
+  const p = parseDate(input.value);
+  if (!p) { if (force) wrong(); return; }
+  if (!(window.crypto && crypto.subtle)) {                   // sin https el navegador no permite descifrar
+    $('#oops').textContent = 'Abre la página con el enlace https (no con http) para poder abrir la carta.';
+    $('#hint').hidden = true; wrong(); return;
+  }
+  busy = true;
+  const attempted = input.value;
+  const ok = await unlock(p);
+  busy = false;
+  if (state !== 'ask') return;
+  if (input.value !== attempted) { check(false); return; }  // siguió escribiendo mientras se revisaba
+  ok ? correct() : wrong();
+}
+
+input.addEventListener('input', e => {
+  if (state !== 'ask') return;
+  clearError();
+  let v = input.value;
+  const deleting = (e.inputType || '').startsWith('delete');
+  // Solo se autoformatea si son números y separadores (si escribe "22 de septiembre…" se respeta tal cual)
+  if (!parseDate(v) && /^[\d\/\-.\s]*$/.test(v) && !(/\s$/.test(v) && !deleting)) {
+    const caret = input.selectionStart, atEnd = caret === null || caret >= v.length;
+    const before = v.slice(0, caret).replace(/\D/g, '').length;
+    const f = fmt(v.replace(/\D/g, ''), !deleting);
+    if (f !== v) {
+      input.value = v = f;
+      let pos = f.length;                       // el cursor sigue junto al último número escrito
+      if (!atEnd) { let n = 0; pos = 0; while (pos < f.length && n < before) if (/\d/.test(f[pos++])) n++; }
+      try { input.setSelectionRange(pos, pos); } catch (err) {}
+    }
+  }
+  if (parseDate(v)) check(false);
+});
+input.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); check(true); }
+});
+
+/* ═════════════ Música ═════════════ */
+const song = $('#song'), musicBtn = $('#music');
+const canSetVolume = (() => { try { const a = new Audio(); a.volume = 0.5; return a.volume === 0.5; } catch (e) { return true; } })();
+let audioCtx = null, gainNode = null;
+
+function setVolume(v) {
+  if (gainNode) gainNode.gain.value = v;
+  else { try { song.volume = v; } catch (e) {} }
+}
+function fadeVolume(from, to, ms) {
+  const t0 = performance.now();
+  setVolume(from);
+  (function tick(now) {
+    const p = Math.min(1, (now - t0) / ms);
+    setVolume(from + (to - from) * p);
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+function setMusicUI(playing) {
+  musicBtn.classList.toggle('playing', playing);
+  musicBtn.classList.toggle('paused', !playing);
+  musicBtn.setAttribute('aria-pressed', String(playing));
+  musicBtn.setAttribute('aria-label', playing ? 'Pausar música' : 'Reanudar música');
+}
+song.addEventListener('play', () => setMusicUI(true));
+song.addEventListener('pause', () => setMusicUI(false));
+
+// Se llama DENTRO del toque en "Abrir mi carta" (los celulares no dejan sonar solos)
+function startMusic() {
+  song.loop = true;
+  if (canSetVolume) song.volume = 0;
+  else {                                   // iPhone: el volumen del <audio> no se puede cambiar → Web Audio
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      const src = audioCtx.createMediaElementSource(song);
+      gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0;
+      src.connect(gainNode); gainNode.connect(audioCtx.destination);
+      if (audioCtx.resume) audioCtx.resume();
+    } catch (e) { audioCtx = gainNode = null; }
+  }
+  const p = song.play();
+  if (p && p.catch) p.catch(() => setMusicUI(false));
+  fadeVolume(0, 0.6, 3000);
+}
+
+musicBtn.addEventListener('click', () => {
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (song.paused) { const p = song.play(); if (p && p.catch) p.catch(() => setMusicUI(false)); }
+  else song.pause();
+});
+
+/* ═════════════ Abrir la carta ═════════════ */
+const paper = $('#paper'), letter = $('#letter'), start = $('#start'), theme = $('#themeColor');
+
+function openLetter() {
+  state = 'letter';
+  const box = field.getBoundingClientRect();
+  const vw = paper.clientWidth, vh = paper.clientHeight;
+  const L = box.left, R = vw - box.right, B = box.bottom, Bt = vh - box.bottom;
+
+  paper.style.visibility = letter.style.visibility = 'visible';
+  letter.scrollTop = 0;
+  setTimeout(() => { musicBtn.classList.add('show'); theme.content = '#FFF2B0'; }, rm.matches ? 0 : 600);
+
+  const finish = () => {
+    paper.style.clipPath = letter.style.clipPath = 'none';
+    start.hidden = true;
+    ambientOn = true; nextSpawn = 0.6;
+    if (rm.matches) seedStill();
+    else { for (let i = 0; i < 6; i++) spawnAmbient(true); ensureLoop(); }
+    draw();
+    letter.focus({ preventScroll: true });
+  };
+
+  if (rm.matches || !paper.animate) {
+    paper.style.clipPath = letter.style.clipPath = 'none';
+    letter.animate && letter.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 250 });
+    finish();
+    return;
+  }
+
+  // La carta se despliega desde el recuadro: primero hacia abajo, luego se abre a toda la pantalla
+  const clip = [
+    `inset(${B}px ${R}px ${Bt}px ${L}px round 18px)`,
+    `inset(${B}px ${R}px 0px ${L}px round 18px)`,
+    `inset(0px 0px 0px 0px round 0px)`
+  ];
+  const opt = { duration: 1200, fill: 'both' };
+  paper.animate([
+    { clipPath: clip[0], offset: 0, easing: 'cubic-bezier(.4,.05,.3,1)' },
+    { clipPath: clip[1], offset: .55, easing: 'cubic-bezier(.5,0,.2,1)' },
+    { clipPath: clip[2], offset: 1 }], opt);
+  const a = letter.animate([
+    { clipPath: clip[0], opacity: 0, offset: 0, easing: 'cubic-bezier(.4,.05,.3,1)' },
+    { clipPath: clip[1], opacity: 0, offset: .55, easing: 'cubic-bezier(.5,0,.2,1)' },
+    { clipPath: clip[2], opacity: 1, offset: 1 }], opt);
+  a.onfinish = finish;
+}
+
+openBtn.addEventListener('click', () => {
+  if (state !== 'solved') return;
+  startMusic();      // ← dentro del mismo toque
+  openLetter();
+});
+
+/* ═════════════ Toques en la carta: brotan flores ═════════════ */
+let down = null;
+document.addEventListener('pointerdown', e => {
+  if (state !== 'letter' || e.target.closest('#music')) { down = null; return; }
+  down = { x: e.clientX, y: e.clientY, id: e.pointerId, t: performance.now() };
+});
+document.addEventListener('pointerup', e => {
+  if (!down || e.pointerId !== down.id) return;
+  const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+  if (moved < 12 && performance.now() - down.t < 700) burst(e.clientX, e.clientY);
+  down = null;
+});
+document.addEventListener('pointercancel', () => { down = null; });   // el dedo empezó a deslizar la carta
+
+// El teclado numérico se abre solo (donde el navegador lo permite)
+try { input.focus({ preventScroll: true }); } catch (e) {}
+})();
+</script>
+</body>
+</html>
